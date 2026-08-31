@@ -1,0 +1,37 @@
+{
+  "name": "fmg-functions",
+  "version": "1.0.0",
+  "description": "FMG Stripe Webhook & Streak Calculation Functions",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "deploy": "firebase deploy --only functions",
+    "serve": "firebase emulators:start --only functions"
+  },
+  "keywords": [
+    "fmg",
+    "stripe",
+    "webhooks",
+    "firestore"
+  ],
+  "author": "Football Mind Gym",
+  "license": "MIT",
+  "dependencies": {
+    "@google-cloud/firestore": "^8.7.1",
+    "axios": "^1.6.0",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "firebase-admin": "^11.10.1",
+    "firebase-functions": "^4.5.1",
+    "stripe": "^14.6.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.5",
+    "@types/uuid": "^9.0.8",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+functions/node_modules/
+web/node_modules/
+
+# Local secrets (must not be committed)
+functions/.secret.local
+
+# Build outputs
+dist/
+build/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+functions/.env
+web/.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Flutter (for later)
+.dart_tool/
+.packages
+pubspec.lock
+
+# Next.js
+.next/
+out/
+
+# Testing
+coverage/
+.nyc_output/
