@@ -1,0 +1,15 @@
+# Railway deployment configuration for FMG Parent Portal
+# Place this in web/ directory
+
+[build]
+builder = "docker"
+dockerfile = "Dockerfile"
+
+[deploy]
+strategy = "node"
+startCommand = "node server.js"
+restartPolicy = "always"
+
+[deploy.env]
+PORT = "3000"
+NODE_ENV = "production"

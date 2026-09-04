@@ -1,0 +1,36 @@
+{
+  "build": {
+    "builder": "docker"
+  },
+  "deploy": {
+    "strategy": "node"
+  "startCommand": "node server.js",
+    "restartPolicy": "always"
+  },
+  "deploy.sources": [
+    {
+      "type": "git",
+      "name": "web",
+      "path": "web",
+      "branch": "main"
+    }
+  ],
+  "services": [
+    {
+      "name": "web",
+      "env": {
+        "PORT": "3000",
+        "NODE_ENV": "production"
+      }
+    },
+    {
+      "name": "functions",
+      "env": {
+        "NODE_ENV": "production",
+        "FIREBASE_PROJECT_ID": "${FIREBASE_PROJECT_ID}",
+        "FIREBASE_PRIVATE_KEY": "${FIREBASE_PRIVATE_KEY}",
+        "FIREBASE_CLIENT_EMAIL": "${FIREBASE_CLIENT_EMAIL}"
+      }
+    }
+  ]
+}

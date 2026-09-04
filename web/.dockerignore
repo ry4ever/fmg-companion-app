@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Development
+.next/
+out/
+.env*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+*.md
+*.pdf
+.git/
+
+# Local config
+railway.toml
