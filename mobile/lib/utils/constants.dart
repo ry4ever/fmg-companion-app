@@ -75,3 +75,93 @@ class EnchargeTemplateIds {
   static const welcomeEmail = 'welcome_invite';
   static const shirtNotification = 'shirt_eligibility';
 }
+
+/// Session metadata: id -> human-readable name and target duration in seconds.
+class SessionCatalog {
+  static const Map<String, SessionInfo> all = {
+    'session_nerves_equal_performance': SessionInfo(
+      name: 'Nerves = Performance',
+      targetDurationSeconds: 300,
+    ),
+    'session_flow_trigger': SessionInfo(
+      name: 'Flow Trigger',
+      targetDurationSeconds: 300,
+    ),
+    'session_play_your_next_game': SessionInfo(
+      name: 'Play Your Next Game',
+      targetDurationSeconds: 300,
+    ),
+    'session_back_to_your_best': SessionInfo(
+      name: 'Back To Your Best',
+      targetDurationSeconds: 300,
+    ),
+    'session_empowered_thinking': SessionInfo(
+      name: 'Empowered Thinking',
+      targetDurationSeconds: 300,
+    ),
+    'session_enjoyment': SessionInfo(
+      name: 'Enjoyment',
+      targetDurationSeconds: 300,
+    ),
+    'session_ice_cold_finisher': SessionInfo(
+      name: 'Ice Cold Finisher',
+      targetDurationSeconds: 300,
+    ),
+    'session_better_final_ball': SessionInfo(
+      name: 'Better Final Ball',
+      targetDurationSeconds: 300,
+    ),
+    'session_team_mate_6th_sense': SessionInfo(
+      name: 'Team Mate 6th Sense',
+      targetDurationSeconds: 300,
+    ),
+    'session_defending_with_positive_aggression': SessionInfo(
+      name: 'Defending With Positive Aggression',
+      targetDurationSeconds: 300,
+    ),
+    'session_sharpen_your_game': SessionInfo(
+      name: 'Sharpen Your Game',
+      targetDurationSeconds: 300,
+    ),
+    'session_unshakable': SessionInfo(
+      name: 'UNSHAKABLE',
+      targetDurationSeconds: 300,
+    ),
+  };
+
+  static SessionInfo forId(String sessionId) {
+    return all[sessionId] ??
+        const SessionInfo(name: 'Training Session', targetDurationSeconds: 300);
+  }
+}
+
+class SessionInfo {
+  final String name;
+  final int targetDurationSeconds;
+  const SessionInfo({required this.name, required this.targetDurationSeconds});
+}
+
+/// Day-of-week key strings (lowercase) used in WeeklySchedule.days.
+class DayKeys {
+  static const monday = 'monday';
+  static const tuesday = 'tuesday';
+  static const wednesday = 'wednesday';
+  static const thursday = 'thursday';
+  static const friday = 'friday';
+  static const saturday = 'saturday';
+  static const sunday = 'sunday';
+
+  static String forToday([DateTime? now]) {
+    final date = now ?? DateTime.now();
+    switch (date.weekday) {
+      case DateTime.monday: return monday;
+      case DateTime.tuesday: return tuesday;
+      case DateTime.wednesday: return wednesday;
+      case DateTime.thursday: return thursday;
+      case DateTime.friday: return friday;
+      case DateTime.saturday: return saturday;
+      case DateTime.sunday: return sunday;
+      default: return monday;
+    }
+  }
+}

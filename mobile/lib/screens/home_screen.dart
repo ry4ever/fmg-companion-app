@@ -16,6 +16,7 @@ class HomeScreen extends ConsumerWidget {
     final weeklyAsync = ref.watch(weeklyScheduleProvider);
     final athleteUser = athleteAsync.value;
     final weeklySchedule = weeklyAsync.value;
+    final dailySession = ref.watch(dailySessionProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -25,7 +26,6 @@ class HomeScreen extends ConsumerWidget {
             icon: const Icon(Icons.logout),
             onPressed: () async {
               await AuthService().signOut();
-              // Force re-evaluation of auth state
               ref.refresh(authStateProvider);
             },
           ),
@@ -44,35 +44,83 @@ class HomeScreen extends ConsumerWidget {
                 const SizedBox(height: 20),
                 _buildArchetypeCard(athleteUser),
                 const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.play_arrow),
-                  label: const Text("Start Today's Session"),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 52),
-                  ),
-                  onPressed: () {
-                    // For now, start a demo session. In production, this would
-                    // come from the weekly schedule for today.
-                    // TODO: Get actual session from weeklySchedule
-                    final athleteUid = ref.watch(athleteUserProvider).value?.uid;
-                    if (athleteUid != null) {
-                      // Example: start the core session for the athlete's archetype
-                      // In a real implementation, this would be selected based on today's day-of-week
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => SessionPlayerScreen(
-                            athleteUid: athleteUid,
-                            sessionId: 'session_nerves_equal_performance', // TODO: dynamic
-                            sessionName: 'Nerves = Performance',
-                            targetDurationSeconds: 300, // 5 minutes
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                ),
+                _buildStartSessionButton(context, ref, dailySession, athleteUser),
               ],
             ),
+    );
+  }
+
+  Widget _buildStartSessionButton(
+    BuildContext context,
+    WidgetRef ref,
+    DailySession? daily,
+    AthleteUser user,
+  ) {
+    if (daily == null) {
+      return const ElevatedButton.icon(
+        icon: Icon(Icons.hourglass_empty),
+        label: Text('Loading today\'s session...'),
+        onPressed: null,
+      );
+    }
+    if (daily.isRestDay) {
+      return Card(
+        color: Colors.green[50],
+        child: const Padding(
+          padding: EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Icon(Icons.self_improvement, color: Colors.green, size: 32),
+              SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  'Rest day — recover and come back stronger.',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    if (daily.alreadyCompleted) {
+      return Card(
+        color: Colors.amber[50],
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.amber, size: 32),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  'Today\'s session "${daily.sessionName}" is complete. Great work!',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    return ElevatedButton.icon(
+      icon: const Icon(Icons.play_arrow),
+      label: Text("Start Today's Session: ${daily.sessionName ?? 'Training'}"),
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(double.infinity, 52),
+      ),
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => SessionPlayerScreen(
+              athleteUid: user.uid,
+              sessionId: daily.sessionId!,
+              sessionName: daily.sessionName ?? 'Training',
+              targetDurationSeconds: daily.targetDurationSeconds ?? 300,
+            ),
+          ),
+        );
+      },
     );
   }
 

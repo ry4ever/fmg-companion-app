@@ -4,11 +4,13 @@ import '../screens/home_screen.dart';
 import '../screens/my_gym_screen.dart';
 import '../screens/onboarding_screen.dart';
 import '../screens/paywall_screen.dart';
+import '../screens/signin_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 GoRouter buildRouter({
+  required bool isSignedIn,
   required bool isPremiumParentTrack,
   required bool onboardingCompleted,
   required int cachedStep,
@@ -16,11 +18,17 @@ GoRouter buildRouter({
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: _initialLocation(
+      isSignedIn,
       isPremiumParentTrack,
       onboardingCompleted,
       cachedStep,
     ),
     routes: [
+      // Sign-in is outside the shell route (no bottom nav)
+      GoRoute(
+        path: '/signin',
+        builder: (context, state) => const SignInScreen(),
+      ),
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) {
@@ -51,7 +59,13 @@ GoRouter buildRouter({
   );
 }
 
-String _initialLocation(bool isPremium, bool onboardingCompleted, int cachedStep) {
+String _initialLocation(
+  bool isSignedIn,
+  bool isPremium,
+  bool onboardingCompleted,
+  int cachedStep,
+) {
+  if (!isSignedIn) return '/signin';
   if (!onboardingCompleted) return '/onboarding?step=$cachedStep';
   if (!isPremium) return '/paywall';
   return '/';

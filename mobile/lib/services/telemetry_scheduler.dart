@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/telemetry_session.dart';
 import '../models/weekly_schedule.dart';
+import 'streak_service.dart';
 
 /// Foreground telemetry tracker implementing Module 4 (Anti-Cheat Guard).
 ///
@@ -115,6 +117,16 @@ class TelemetryScheduler extends WidgetsBindingObserver {
     }
 
     await batch.commit();
+
+    // After telemetry write, update streak if completed
+    if (completedFully) {
+      try {
+        await StreakService().incrementStreak(athleteUid);
+      } catch (e) {
+        // Log but don't fail the session
+        debugPrint('Failed to update streak: $e');
+      }
+    }
   }
 
   @override

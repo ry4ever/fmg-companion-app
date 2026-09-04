@@ -36,7 +36,7 @@ export function getFirebaseApp(): FirebaseApp {
     if (!getApps().length) {
       firebaseApp = initializeApp(getFirebaseConfig());
     } else {
-      firebaseApp = getApps()[0];
+      firebaseApp = getApps()[0] as FirebaseApp;
     }
   }
   return firebaseApp;
