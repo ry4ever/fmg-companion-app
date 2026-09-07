@@ -19,6 +19,7 @@ import {
 let firebaseApp: FirebaseApp | null = null;
 let authInstance: Auth | null = null;
 let firestoreInstance: Firestore | null = null;
+let initError: string | null = null;
 
 function getFirebaseConfig() {
   return {
@@ -31,12 +32,37 @@ function getFirebaseConfig() {
   };
 }
 
+function isConfigValid(config: ReturnType<typeof getFirebaseConfig>) {
+  return Boolean(
+    config.apiKey &&
+    config.authDomain &&
+    config.projectId &&
+    config.appId &&
+    !config.apiKey.includes('demo-api-key') &&
+    !config.appId.includes('0000000000000000')
+  );
+}
+
+export function getInitError(): string | null {
+  return initError;
+}
+
 export function getFirebaseApp(): FirebaseApp {
   if (!firebaseApp) {
-    if (!getApps().length) {
-      firebaseApp = initializeApp(getFirebaseConfig());
-    } else {
-      firebaseApp = getApps()[0] as FirebaseApp;
+    try {
+      const config = getFirebaseConfig();
+      if (!isConfigValid(config)) {
+        initError = 'Firebase config is not set. Update web/.env.production with real values from Firebase Console.';
+        throw new Error(initError);
+      }
+      if (!getApps().length) {
+        firebaseApp = initializeApp(config);
+      } else {
+        firebaseApp = getApps()[0] as FirebaseApp;
+      }
+    } catch (err: any) {
+      initError = err.message;
+      throw err;
     }
   }
   return firebaseApp;
@@ -54,7 +80,6 @@ export function getFirestoreInstance(): Firestore {
   if (!firestoreInstance) {
     getFirebaseApp();
     firestoreInstance = getFirestore();
-    // Enable offline persistence
     enableIndexedDbPersistence(firestoreInstance).catch(() => {
       // Silently fail - persistence might already be enabled or blocked
     });

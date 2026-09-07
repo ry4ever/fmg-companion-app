@@ -8,36 +8,53 @@ import {
   onAuthStateChanged,
   getAuth,
 } from 'firebase/auth';
-import { getFirebaseApp } from '@/lib/firebase';
+import { getFirebaseApp, getInitError } from '@/lib/firebase';
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [configError, setConfigError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    const auth = getAuth(getFirebaseApp());
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    // Check Firebase config first
+    const initError = getInitError();
+    if (initError) {
+      setConfigError(initError);
       setLoading(false);
-      if (user) {
-        // Check if user is a parent by looking up their document
-        // For now, redirect to dashboard - we'll verify there
-        router.push('/dashboard');
-      }
-    });
-    return () => unsubscribe();
+      return;
+    }
+
+    try {
+      const app = getFirebaseApp();
+      const auth = getAuth(app);
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        setLoading(false);
+        if (user) {
+          router.push('/dashboard');
+        }
+      });
+      return () => unsubscribe();
+    } catch (err: any) {
+      setConfigError(err.message || 'Firebase initialization failed');
+      setLoading(false);
+    }
   }, [router]);
 
   const handleGoogleSignIn = async () => {
     setError(null);
     try {
-      const auth = getAuth(getFirebaseApp());
+      const app = getFirebaseApp();
+      const auth = getAuth(app);
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-      // onAuthStateChanged will handle the redirect
     } catch (err: any) {
       console.error('Sign in error:', err);
-      setError('Failed to sign in. Please try again.');
+      if (err.code === 'auth/configuration-not-found') {
+        setError('Firebase Auth is not configured. Please enable Email/Password or Google sign-in in Firebase Console.');
+      } else {
+        setError('Failed to sign in. Please try again.');
+      }
     }
   };
 
@@ -57,6 +74,16 @@ export default function LoginPage() {
           <p className="text-gray-600 mt-2">Parent Accountability Portal</p>
         </div>
 
+        {configError && (
+          <div className="mb-4 p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg">
+            <p className="font-medium">Configuration Required</p>
+            <p className="text-sm mt-1">{configError}</p>
+            <p className="text-sm mt-2">
+              Update <code className="bg-amber-100 px-1 rounded">web/.env.production</code> with your Firebase project values.
+            </p>
+          </div>
+        )}
+
         <div className="card">
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
@@ -66,8 +93,8 @@ export default function LoginPage() {
 
           <button
             onClick={handleGoogleSignIn}
-            disabled={loading}
-            className="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors flex items-center justify-center gap-3"
+            disabled={loading || !!configError}
+            className="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path

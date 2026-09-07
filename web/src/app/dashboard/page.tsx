@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { CompletionGrid } from '@/components/CompletionGrid';
 import { ConversationStarter } from '@/components/ConversationStarter';
-import { getFirestoreInstance, doc, getDoc } from '@/lib/firebase';
+import { getFirestoreInstance, doc, getDoc, getInitError } from '@/lib/firebase';
 import { ParentUser, AthleteUser, WeeklySchedule } from '@/types/models';
 import { useRouter } from 'next/navigation';
 
@@ -15,22 +15,32 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  // Handle login redirect
+  useEffect(() => {
+    const isAuthenticated = !!localStorage.getItem('fmg_user_id');
+    if (!isAuthenticated) {
+      router.push('/login');
+    }
+  }, [router]);
+
   useEffect(() => {
     const loadUserData = async () => {
       try {
         setLoading(true);
         setError(null);
 
+        const initError = getInitError();
+        if (initError) {
+          throw new Error(initError);
+        }
+
         const firestore = getFirestoreInstance();
 
-        // Get current user ID from auth (simplified - in practice you'd get from auth state)
-        // For demo, we'll use a placeholder or check URL params
         const userId = localStorage.getItem('fmg_user_id') || 'demo_parent@example.com';
 
-        // Get parent document
         const parentDoc = await getDoc(doc(firestore, 'users', userId));
         if (!parentDoc.exists()) {
-          throw new Error('Parent account not found');
+          throw new Error('Parent account not found. Please sign in through the login page.');
         }
 
         const parentData = parentDoc.data() as ParentUser;
@@ -40,7 +50,6 @@ export default function DashboardPage() {
 
         setParent(parentData);
 
-        // Get athlete document
         const athleteDoc = await getDoc(doc(firestore, 'users', parentData.linked_athlete_uid));
         if (!athleteDoc.exists()) {
           throw new Error('Athlete profile not found');
@@ -49,7 +58,6 @@ export default function DashboardPage() {
         const athleteData = athleteDoc.data() as AthleteUser;
         setAthlete(athleteData);
 
-        // Get weekly schedule
         const scheduleDoc = await getDoc(
           doc(firestore, 'users', parentData.linked_athlete_uid, 'schedules', 'weekly')
         );
@@ -68,15 +76,6 @@ export default function DashboardPage() {
     loadUserData();
   }, [router]);
 
-  // Handle login redirect
-  useEffect(() => {
-    // Check if user is authenticated via localStorage (simplified)
-    const isAuthenticated = !!localStorage.getItem('fmg_user_id');
-    if (!isAuthenticated) {
-      router.push('/login');
-    }
-  }, [router]);
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -88,7 +87,7 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
+        <div className="text-center max-w-md mx-auto px-4">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">{error}</h2>
           <button
             onClick={() => router.push('/login')}
@@ -152,7 +151,6 @@ export default function DashboardPage() {
 
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Completion Grid - takes full width on md and up */}
           <div className="col-span-1 md:col-span-2">
             <CompletionGrid
               weeklySchedule={weeklySchedule}
@@ -160,7 +158,6 @@ export default function DashboardPage() {
             />
           </div>
 
-          {/* Conversation Starter */}
           <div className="col-span-1">
             <ConversationStarter
               archetype={athlete.assigned_archetype || 'The Resilient Bounceback'}
@@ -168,7 +165,6 @@ export default function DashboardPage() {
             />
           </div>
 
-          {/* Athlete Stats */}
           <div className="col-span-1">
             <div className="card">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Athlete Stats</h3>
