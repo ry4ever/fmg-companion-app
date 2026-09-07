@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "286291793703",
+    "project_id": "fmg-companion-app",
+    "storage_bucket": "fmg-companion-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:286291793703:android:3d17e50d9269106a6a3b02",
+        "android_client_info": {
+          "package_name": "com.fmg.companion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMfvStTnqQ865jSBlYZaCk6VPih2nN_Lg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
