@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "286291793703",
+    "project_id": "fmg-companion-app",
+    "storage_bucket": "fmg-companion-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:286291793703:android:3d17e50d9269106a6a3b02",
+        "android_client_info": {
+          "package_name": "com.fmg.companion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "286291793703-s9s0euopt39ncnm7brg48lcuki3bh9im.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fmg.companion",
+            "certificate_hash": "6e85829a3d7c95648a229aae275e8be59ccf8965"
+          }
+        },
+        {
+          "client_id": "286291793703-oke5n92lnsncs5908s0csgk8iu5u5i21.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMfvStTnqQ865jSBlYZaCk6VPih2nN_Lg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "286291793703-oke5n92lnsncs5908s0csgk8iu5u5i21.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "286291793703-5hsfke5ga645uj3fd600veccl78c5t7e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.fmg.companion"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
