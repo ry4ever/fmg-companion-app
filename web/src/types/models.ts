@@ -6,7 +6,7 @@ export interface ParentUser {
   linked_athlete_uid: string;
   subscription_status: 'active';
   plan_tier: 'monthly' | 'annual';
-  billing_cycle_anchor: string;
+  billing_cycle_anchor: string | number;
 }
 
 export interface AthleteUser {
@@ -17,7 +17,7 @@ export interface AthleteUser {
   assigned_archetype: string;
   onboarding_completed: boolean;
   composure_streak: number;
-  last_completed_timestamp: string;
+  last_completed_timestamp: string | number;
   shirt_eligible_flag: boolean;
   shirt_status: 'unclaimed' | 'shipped' | 'delivered';
 }
@@ -37,7 +37,7 @@ export interface DailySchedule {
 }
 
 export interface WeeklySchedule {
-  active_week_start: string;
+  active_week_start: string | number;
   is_custom_mode: boolean;
   days: {
     monday: DailySchedule;

@@ -112,15 +112,15 @@ export const DEMO_ATHLETE_DATA = {
 };
 
 export const DEMO_WEEKLY_SCHEDULE = {
-  active_week_start: new Date('2026-09-08'),
+  active_week_start: new Date('2026-09-08').getTime(),
   is_custom_mode: false,
   days: {
     monday: { completed: true, session_id: 'session_monday_workout' },
     tuesday: { completed: false, session_id: 'session_tuesday_workout' },
     wednesday: { completed: true, session_id: 'session_wednesday_workout' },
-    thursday: { completed: false, session_id: null },
+    thursday: { completed: false },
     friday: { completed: true, session_id: 'session_friday_workout' },
-    saturday: { completed: false, session_id: null },
+    saturday: { completed: false },
     sunday: { completed: true, session_id: 'session_sunday_workout' },
   },
 };
