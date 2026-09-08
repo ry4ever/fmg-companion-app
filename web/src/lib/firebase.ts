@@ -87,6 +87,58 @@ export function getFirestoreInstance(): Firestore {
   return firestoreInstance;
 }
 
+// Demo data for development without Firebase configuration
+export const DEMO_PARENT_DATA = {
+  uid: 'demo_parent@example.com',
+  email: 'demo_parent@example.com',
+  role: 'parent',
+  linked_athlete_uid: 'demo_athlete_001',
+  subscription_status: 'active',
+  plan_tier: 'annual',
+  billing_cycle_anchor: Date.now(),
+};
+
+export const DEMO_ATHLETE_DATA = {
+  uid: 'demo_athlete_001',
+  parent_uid: 'demo_parent@example.com',
+  name: 'Taylor Rodriguez',
+  role: 'athlete',
+  assigned_archetype: 'The Resilient Bounceback',
+  onboarding_completed: true,
+  composure_streak: 7,
+  last_completed_timestamp: Date.now(),
+  shirt_eligible_flag: false,
+  shirt_status: 'none',
+};
+
+export const DEMO_WEEKLY_SCHEDULE = {
+  active_week_start: new Date('2026-09-08'),
+  is_custom_mode: false,
+  days: {
+    monday: { completed: true, session_id: 'session_monday_workout' },
+    tuesday: { completed: false, session_id: 'session_tuesday_workout' },
+    wednesday: { completed: true, session_id: 'session_wednesday_workout' },
+    thursday: { completed: false, session_id: null },
+    friday: { completed: true, session_id: 'session_friday_workout' },
+    saturday: { completed: false, session_id: null },
+    sunday: { completed: true, session_id: 'session_sunday_workout' },
+  },
+};
+
+export const isDemoMode = () => {
+  // Demo mode if no API key, or if the key looks like a placeholder
+  return !process.env.NEXT_PUBLIC_FIREBASE_API_KEY ||
+         process.env.NEXT_PUBLIC_FIREBASE_API_KEY.includes('demo-api-key') ||
+         process.env.NEXT_PUBLIC_FIREBASE_API_KEY === 'AIzaSyCgZXr-OWLTRpONU1Ky0QVikh3LlNmM8Eo';
+};
+
+export const demoLogin = (userEmail: string = 'demo_parent@example.com') => {
+  if (isDemoMode()) {
+    localStorage.setItem('fmg_user_id', userEmail);
+    window.location.reload();
+  }
+};
+
 export {
   GoogleAuthProvider,
   signInWithPopup,

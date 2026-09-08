@@ -8,7 +8,7 @@ import {
   onAuthStateChanged,
   getAuth,
 } from 'firebase/auth';
-import { getFirebaseApp, getInitError } from '@/lib/firebase';
+import { getFirebaseApp, getInitError, demoLogin } from '@/lib/firebase';
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(true);
@@ -31,6 +31,7 @@ export default function LoginPage() {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         setLoading(false);
         if (user) {
+          localStorage.setItem('fmg_user_id', user.email || user.uid);
           router.push('/dashboard');
         }
       });
@@ -47,7 +48,8 @@ export default function LoginPage() {
       const app = getFirebaseApp();
       const auth = getAuth(app);
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+localStorage.setItem('fmg_user_id', result.user.email || result.user.uid);
     } catch (err: any) {
       console.error('Sign in error:', err);
       if (err.code === 'auth/configuration-not-found') {
@@ -120,6 +122,14 @@ export default function LoginPage() {
           <p className="text-center text-sm text-gray-500 mt-4">
             Only parent accounts with active subscriptions can access the portal.
           </p>
+
+          <button
+            onClick={() => demoLogin()}
+            disabled={!!configError}
+            className="w-full mt-3 py-3 px-4 bg-brand-600 text-white rounded-lg font-medium hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Try Demo Mode
+          </button>
         </div>
       </div>
     </div>
