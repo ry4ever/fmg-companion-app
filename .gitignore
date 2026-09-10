@@ -5,6 +5,17 @@ web/node_modules/
 
 # Local secrets (must not be committed)
 functions/.secret.local
+*.json
+!.firebase/
+!.firebaserc
+!firebase.json
+!firestore.indexes.json
+!firestore.rules
+!google-services.json
+!mobile/google-services.json
+!mobile/android/app/google-services.json
+!ios/GoogleService-Info.plist
+!mobile/ios/Runner/GoogleService-Info.plist
 
 # Build outputs
 dist/
@@ -38,10 +49,18 @@ Thumbs.db
 firebase-debug.log
 firestore-debug.log
 
-# Flutter (for later)
-.dart_tool/
-.packages
-pubspec.lock
+# Flutter generated files
+.flutter-plugins
+.flutter-plugins-dependencies
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/android/local.properties
+mobile/android/app/src/
+mobile/ios/Flutter/
+mobile/ios/Runner/GeneratedPluginRegistrant.h
+mobile/ios/Runner/GeneratedPluginRegistrant.m
+mobile/.dart_tool/
+mobile/pubspec.lock
 
 # Next.js
 .next/
