@@ -12,7 +12,28 @@
           "package_name": "com.fmg.companion"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "286291793703-s9s0euopt39ncnm7brg48lcuki3bh9im.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fmg.companion",
+            "certificate_hash": "6e85829a3d7c95648a229aae275e8be59ccf8965"
+          }
+        },
+        {
+          "client_id": "286291793703-u15n0f2aim33cp0r8ndhrmbj2q8n7kdn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fmg.companion",
+            "certificate_hash": "8b9ef38e742a964281ca6ee41165e3bb6d7a1855"
+          }
+        },
+        {
+          "client_id": "286291793703-oke5n92lnsncs5908s0csgk8iu5u5i21.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCMfvStTnqQ865jSBlYZaCk6VPih2nN_Lg"

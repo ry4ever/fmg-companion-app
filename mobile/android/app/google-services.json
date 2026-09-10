@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "286291793703-u15n0f2aim33cp0r8ndhrmbj2q8n7kdn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fmg.companion",
+            "certificate_hash": "8b9ef38e742a964281ca6ee41165e3bb6d7a1855"
+          }
+        },
+        {
           "client_id": "286291793703-oke5n92lnsncs5908s0csgk8iu5u5i21.apps.googleusercontent.com",
           "client_type": 3
         }
