@@ -65,6 +65,7 @@ mobile/pubspec.lock
 # Next.js
 .next/
 out/
+tsconfig.tsbuildinfo
 
 # Testing
 coverage/
