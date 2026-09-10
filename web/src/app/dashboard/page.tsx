@@ -3,7 +3,16 @@
 import { useEffect, useState } from 'react';
 import { CompletionGrid } from '@/components/CompletionGrid';
 import { ConversationStarter } from '@/components/ConversationStarter';
-import { getFirestoreInstance, doc, getDoc, getInitError } from '@/lib/firebase';
+import {
+  getFirestoreInstance,
+  doc,
+  getDoc,
+  getInitError,
+  isDemoMode,
+  DEMO_PARENT_DATA,
+  DEMO_ATHLETE_DATA,
+  DEMO_WEEKLY_SCHEDULE
+} from '@/lib/firebase';
 import { ParentUser, AthleteUser, WeeklySchedule } from '@/types/models';
 import { useRouter } from 'next/navigation';
 
@@ -37,6 +46,15 @@ export default function DashboardPage() {
         const firestore = getFirestoreInstance();
 
         const userId = localStorage.getItem('fmg_user_id') || 'demo_parent@example.com';
+
+        // Demo mode - use mock data when Firebase isn't configured
+        if (isDemoMode()) {
+          setParent(DEMO_PARENT_DATA as ParentUser);
+          setAthlete(DEMO_ATHLETE_DATA as AthleteUser);
+          setWeeklySchedule(DEMO_WEEKLY_SCHEDULE);
+          setLoading(false);
+          return;
+        }
 
         const parentDoc = await getDoc(doc(firestore, 'users', userId));
         if (!parentDoc.exists()) {

@@ -1,4 +1,5 @@
 import '../models/onboarding_state.dart';
+import '../models/weekly_schedule.dart';
 import '../utils/constants.dart';
 
 /// Archetype assignment engine.
@@ -42,11 +43,11 @@ class ArchetypeEngine {
           case 'Attacker':
             return ['session_ice_cold_finisher', 'session_better_final_ball', 'session_team_mate_6th_sense'];
           case 'Midfielder':
-            return ['session_better_final_ball', 'session_team_mate_6th_sense', 'session_sharpen_your_game'];
+            return ['session_ice_cold_finisher', 'session_team_mate_6th_sense', 'session_better_final_ball'];
           case 'Defender':
-            return ['session_defending_with_positive_aggression', 'session_sharpen_your_game', 'session_team_mate_6th_sense'];
+            return ['session_ice_cold_finisher', 'session_defending_with_positive_aggression', 'session_team_mate_6th_sense'];
           default:
-            return ['session_better_final_ball', 'session_team_mate_6th_sense', 'session_sharpen_your_game'];
+            return ['session_ice_cold_finisher', 'session_team_mate_6th_sense', 'session_better_final_ball'];
         }
       case Archetype.unshakableCompetitor:
         return ['session_unshakable', 'session_team_mate_6th_sense', 'session_play_your_next_game'];
@@ -81,7 +82,7 @@ class ArchetypeEngine {
         activeDayCount = 3;
     }
 
-    final now = DateTime.now().toIso8601String();
+    final now = DateTime.now();
     final weekStart = DateTime.utc(
       now.year,
       now.month,

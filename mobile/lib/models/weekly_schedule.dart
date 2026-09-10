@@ -47,13 +47,13 @@ class WeeklySchedule {
 
   Map<String, dynamic> toMap() {
     final daysData = <String, dynamic>{};
-    daysData['monday'] = days['monday'].toMap();
-    daysData['tuesday'] = days['tuesday'].toMap();
-    daysData['wednesday'] = days['wednesday'].toMap();
-    daysData['thursday'] = days['thursday'].toMap();
-    daysData['friday'] = days['friday'].toMap();
-    daysData['saturday'] = days['saturday'].toMap();
-    daysData['sunday'] = days['sunday'].toMap();
+    daysData['monday'] = days['monday']?.toMap() ?? {};
+    daysData['tuesday'] = days['tuesday']?.toMap() ?? {};
+    daysData['wednesday'] = days['wednesday']?.toMap() ?? {};
+    daysData['thursday'] = days['thursday']?.toMap() ?? {};
+    daysData['friday'] = days['friday']?.toMap() ?? {};
+    daysData['saturday'] = days['saturday']?.toMap() ?? {};
+    daysData['sunday'] = days['sunday']?.toMap() ?? {};
 
     return {
       'active_week_start': activeWeekStart,

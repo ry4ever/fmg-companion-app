@@ -11,23 +11,12 @@ service cloud.firestore {
       return request.auth.uid == uid;
     }
 
-    function isParentDocument(parentEmail) {
-      return isAuthenticated() &&
-             resource.data.email == request.auth.token.email;
-    }
-
     // Users collection - top-level user documents
+    // Read/write only via UID-based ownership checks
+    // Direct client writes are blocked - only backend functions can provision
     match /users/{userId} {
-      // Allow read if:
-      // 1. It's the authenticated user's own parent document (email-based)
-      // 2. It's the authenticated athlete's own document
-      // 3. Cloud Functions (admin access via resource.data._readTime check bypass)
       allow read: if isAuthenticated() &&
-                     (resource.data.email == request.auth.token.email ||
-                      resource.data.uid == request.auth.uid);
-
-      // Allow create/update only via Cloud Functions (admin SDK)
-      // Direct client writes are blocked - only backend functions can provision
+                     (resource.data.uid == request.auth.uid);
       allow create: if false;
       allow update: if false;
       allow delete: if false;
