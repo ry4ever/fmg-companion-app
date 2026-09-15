@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../providers/auth_provider.dart';
 import '../services/auth_service.dart';
+import '../screens/home_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -15,6 +17,15 @@ class _SignInScreenState extends State<SignInScreen> {
   bool _isLoading = false;
   String? _errorMessage;
   bool _linkSent = false;
+
+  void _handleDemoLogin() {
+    if (!isFirebaseAvailable) {
+      setDemoMode(true);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -48,10 +59,22 @@ class _SignInScreenState extends State<SignInScreen> {
         _linkSent = true;
       });
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = _friendlyError(e.toString());
-      });
+      // If Firebase fails to initialize and this looks like a not-initialized error,
+      // offer to switch to demo mode instead.
+      final errorStr = e.toString();
+      if (errorStr.contains('not-initialized') && !isFirebaseAvailable) {
+        // In demo mode, we can just proceed with demo login
+        setDemoMode(true);
+        setState(() {
+          _isLoading = false;
+          _linkSent = true;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = _friendlyError(errorStr);
+        });
+      }
     }
   }
 
@@ -170,8 +193,11 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
           const SizedBox(height: 16),
           TextButton(
-            onPressed: () => context.go('/'),
-            child: const Text('Continue as guest'),
+            onPressed: () {
+              setDemoMode(true);
+              context.go('/');
+            },
+            child: const Text('Try Demo Mode'),
           ),
         ],
       ),

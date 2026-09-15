@@ -5,6 +5,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'dart:io' show Platform;
 
 /// DefaultFirebaseOptions holds the platform-specific Firebase configuration.
 class DefaultFirebaseOptions {
@@ -20,9 +21,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return _macos;
       default:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions are not supported for this platform: $defaultTargetPlatform',
-        );
+        // For unsupported platforms (Linux, Windows, etc.) return a fallback
+        // Use the Android config as a safe default
+        return _android;
     }
   }
 
@@ -32,7 +33,6 @@ class DefaultFirebaseOptions {
     appId: '1:286291793703:android:3d17e50d9269106a6a3b02',
     messagingSenderId: '286291793703',
     projectId: 'fmg-companion-app',
-    databaseUrl: 'https://fmg-companion-app.firebaseio.com',
     storageBucket: 'fmg-companion-app.firebasestorage.app',
   );
 
@@ -42,7 +42,6 @@ class DefaultFirebaseOptions {
     appId: '1:286291793703:ios:f770fb22634c0d466a3b02',
     messagingSenderId: '286291793703',
     projectId: 'fmg-companion-app',
-    databaseUrl: 'https://fmg-companion-app.firebaseio.com',
     storageBucket: 'fmg-companion-app.firebasestorage.app',
     iosBundleId: 'com.fmg.companion',
   );
@@ -53,7 +52,6 @@ class DefaultFirebaseOptions {
     appId: '1:286291793703:ios:f770fb22634c0d466a3b02',
     messagingSenderId: '286291793703',
     projectId: 'fmg-companion-app',
-    databaseUrl: 'https://fmg-companion-app.firebaseio.com',
     storageBucket: 'fmg-companion-app.firebasestorage.app',
     iosBundleId: 'com.fmg.companion',
   );
@@ -64,7 +62,6 @@ class DefaultFirebaseOptions {
     appId: '1:286291793703:web:95fb7ddec5da70cb6a3b02',
     messagingSenderId: '286291793703',
     projectId: 'fmg-companion-app',
-    databaseUrl: 'https://fmg-companion-app.firebaseio.com',
     storageBucket: 'fmg-companion-app.firebasestorage.app',
     authDomain: 'fmg-companion-app.firebaseapp.com',
   );

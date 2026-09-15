@@ -1,17 +1,38 @@
 import 'package:flutter/material.dart' hide Router;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'firebase_options.dart';
-import 'lib/routes/app_router.dart' as routes;
-import 'lib/providers/auth_provider.dart';
+import 'routes/app_router.dart' as routes;
+import 'providers/auth_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // Attempt Firebase initialization; gracefully continue on platforms
+  // that don't support the native Firebase SDK (e.g., Linux desktop).
+  FirebaseOptions? options;
+  try {
+    options = DefaultFirebaseOptions.currentPlatform;
+    await Firebase.initializeApp(options: options);
+    setFirebaseAvailable(true);
+  } catch (e) {
+    // Firebase not available on this platform — continue without it.
+    // The app will run in a limited mode; features requiring Firebase
+    // (auth, firestore) will be unavailable until configured properly.
+    options = null;
+    setFirebaseAvailable(false);
+  }
+
+  // Redirect Firebase traffic to local emulators in debug mode
+  if (kDebugMode && options != null) {
+    final emulatorHost = kIsWeb ? 'localhost' : '10.0.2.2';
+    await FirebaseAuth.instance.useAuthEmulator(emulatorHost, 9099);
+    FirebaseFirestore.instance.useFirestoreEmulator(emulatorHost, 8080);
+  }
 
   await Hive.initFlutter();
   await Hive.openBox('local_cache');

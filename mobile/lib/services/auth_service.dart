@@ -19,16 +19,15 @@ class AuthService {
   /// tapping the link (typically a custom scheme or Firebase Dynamic Link).
   Future<void> sendSignInLink(String email, {String? continueUrl}) async {
     final actionCodeSettings = ActionCodeSettings(
-      url: continueUrl ?? 'fmgcompanion://signin',
+      // On web, Firebase Auth requires the URL to be a full http(s):// URL
+      // pointing to an authorized domain. A custom scheme (e.g. fmgcompanion://)
+      // is rejected with a network error. Use the project's web app URL.
+      url: continueUrl ?? 'https://fmg-companion-app.web.app',
       handleCodeInApp: true,
-      android: const AndroidSettings(
-        packageName: 'com.fmg.companion',
-        installApp: true,
-        minimumVersion: '1',
-      ),
-      ios: const IOSSettings(
-        bundleId: 'com.fmg.companion',
-      ),
+      androidPackageName: 'com.fmg.companion',
+      androidMinimumVersion: '1',
+      androidInstallApp: true,
+      iOSBundleId: 'com.fmg.companion',
     );
     await _auth.sendSignInLinkToEmail(
       email: email,

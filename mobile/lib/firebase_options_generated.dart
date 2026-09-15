@@ -31,7 +31,6 @@ class DefaultFirebaseOptions {
     appId: '1:286291793703:android:3d17e50d9269106a6a3b02',
     messagingSenderId: '286291793703',
     projectId: 'fmg-companion-app',
-    databaseUrl: 'https://fmg-companion-app.firebaseio.com',
     storageBucket: 'fmg-companion-app.firebasestorage.app',
   );
 
@@ -41,7 +40,6 @@ class DefaultFirebaseOptions {
     appId: '1:286291793703:ios:f770fb22634c0d466a3b02',
     messagingSenderId: '286291793703',
     projectId: 'fmg-companion-app',
-    databaseUrl: 'https://fmg-companion-app.firebaseio.com',
     storageBucket: 'fmg-companion-app.firebasestorage.app',
     iosBundleId: 'com.fmg.companion',
   );
@@ -52,7 +50,6 @@ class DefaultFirebaseOptions {
     appId: '1:286291793703:ios:f770fb22634c0d466a3b02',
     messagingSenderId: '286291793703',
     projectId: 'fmg-companion-app',
-    databaseUrl: 'https://fmg-companion-app.firebaseio.com',
     storageBucket: 'fmg-companion-app.firebasestorage.app',
     iosBundleId: 'com.fmg.companion',
   );
@@ -63,7 +60,6 @@ class DefaultFirebaseOptions {
     appId: '1:286291793703:web:95fb7ddec5da70cb6a3b02',
     messagingSenderId: '286291793703',
     projectId: 'fmg-companion-app',
-    databaseUrl: 'https://fmg-companion-app.firebaseio.com',
     storageBucket: 'fmg-companion-app.firebasestorage.app',
     authDomain: 'fmg-companion-app.firebaseapp.com',
   );

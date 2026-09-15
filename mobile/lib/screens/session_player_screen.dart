@@ -160,7 +160,7 @@ class _SessionPlayerScreenState extends State<SessionPlayerScreen> {
                     else if (_hasCompleted)
                       const Icon(Icons.check_circle, size: 48, color: Colors.green)
                     else
-                      const Icon(Icons.pause_circle_fill, size: 48, color: Colors.white54),
+                      const Icon(Icons.pause_circle, size: 48, color: Colors.white54),
                     Positioned(
                       bottom: 16,
                       left: 16,

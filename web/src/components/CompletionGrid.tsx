@@ -6,8 +6,8 @@ import { useMemo } from 'react';
 export function CompletionGrid({ weeklySchedule, athleteName }: CompletionGridProps) {
   if (!weeklySchedule) {
     return (
-      <div className="card">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">{athleteName}\'s Weekly Progress</h3>
+      <div className="card p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{athleteName}'s Weekly Progress</h3>
         <p className="text-gray-500">No schedule data available.</p>
       </div>
     );
@@ -24,22 +24,37 @@ export function CompletionGrid({ weeklySchedule, athleteName }: CompletionGridPr
   ], [weeklySchedule]);
 
   const completedCount = days.filter(d => d.date.completed).length;
+  const progressPercent = Math.round((completedCount / 7) * 100);
 
   return (
-    <div className="card">
+    <div className="card p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
-          {athleteName}\'s Weekly Progress
-        </h3>
-        <span className="text-sm text-gray-500">
-          {completedCount}/7 sessions completed
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">
+            {athleteName}'s Weekly Progress
+          </h3>
+          <p className="text-sm text-gray-500 mt-1">
+            {progressPercent}% of weekly sessions completed
+          </p>
+        </div>
+        <span className="text-sm font-medium text-brand-600">
+          {completedCount}/7 sessions
         </span>
       </div>
 
-      <div className="grid grid-cols-7 gap-3">
+      <div className="h-2 bg-gray-100 rounded-full mb-6">
+        <div
+          className="h-2 rounded-full bg-brand-600 transition-all duration-300"
+          style={{ width: `${progressPercent}%` }}
+        />
+      </div>
+
+      <div className="grid grid-cols-7 gap-2">
         {days.map(({ key, label, date }) => (
           <div key={key} className="flex flex-col items-center">
-            <span className="text-xs font-medium text-gray-500 mb-2">{label}</span>
+            <span className={`text-xs font-medium mb-2 ${
+              date.completed ? 'text-green-600' : 'text-gray-500'
+            }`}>{label}</span>
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
               date.completed
                 ? 'bg-green-100 border-2 border-green-400'

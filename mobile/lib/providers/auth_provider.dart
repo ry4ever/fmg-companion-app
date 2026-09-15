@@ -2,27 +2,100 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/athlete_user.dart';
 import '../models/weekly_schedule.dart';
+import '../services/demo_store.dart';
 import '../services/firestore_service.dart';
 import '../services/onboarding_storage.dart';
 import '../services/streak_service.dart';
 import '../utils/constants.dart';
+import '../utils/archetype_engine.dart';
+
+/// Flag indicating whether Firebase is available for use.
+/// Set during main.dart initialization.
+bool get isFirebaseAvailable => _isFirebaseAvailable;
+bool _isFirebaseAvailable = true;
+
+/// Flag indicating whether the app is running in demo mode (bypasses Firebase).
+bool get isDemoMode => _isDemoMode;
+bool _isDemoMode = false;
+
+/// Mark demo mode state.
+void setDemoMode(bool value) {
+  _isDemoMode = value;
+  if (value) {
+    final demoAthlete = _demoAthleteUser();
+    final demoSchedule = _demoWeeklySchedule();
+    DemoStore().save(athlete: demoAthlete, schedule: demoSchedule);
+  }
+}
+
+/// Mark Firebase availability status. Called by main.dart.
+void setFirebaseAvailable(bool value) {
+  _isFirebaseAvailable = value;
+}
+
+/// Demo user credentials.
+const String demoUid = 'demo_user_demo';
+const String demoEmail = 'demo@example.com';
+const String demoName = 'Demo Athlete';
 
 /// Firestore service provider
 final firestoreServiceProvider = Provider((ref) => FirestoreService());
 
+/// Simple demo user model for when Firebase is not available
+class DemoUser {
+  final String uid;
+  final String? email;
+  final String? displayName;
+  final String? photoURL;
+  final bool isAnonymous;
+
+  DemoUser({
+    required this.uid,
+    this.email,
+    this.displayName,
+    this.photoURL,
+    this.isAnonymous = true,
+  });
+}
+
 /// Auth state provider — watches Firebase Auth sign-in state
-final authStateProvider = StreamProvider<User?>((ref) {
-  return FirebaseAuth.instance.authStateChanges();
+final authStateProvider = StreamProvider<DemoUser?>((ref) {
+  // Demo mode: return a fixed demo user
+  if (isDemoMode) {
+    final demoUser = DemoUser(
+      uid: demoUid,
+      email: demoEmail,
+      displayName: demoName,
+    );
+    return Stream.value(demoUser);
+  }
+
+  if (!isFirebaseAvailable) return const Stream<DemoUser?>.empty();
+  return FirebaseAuth.instance.authStateChanges().map((firebaseUser) {
+    if (firebaseUser == null) return null;
+    return DemoUser(
+      uid: firebaseUser.uid,
+      email: firebaseUser.email,
+      displayName: firebaseUser.displayName,
+      photoURL: firebaseUser.photoURL,
+      isAnonymous: firebaseUser.isAnonymous,
+    );
+  });
 });
 
 /// Athlete user provider — watches the current athlete user doc in Firestore
-///
-/// The athlete's auth UID is the document key for /users/{athleteUid}.
+/// or DemoStore in demo mode.
 final athleteUserProvider = StreamProvider<AthleteUser?>((ref) {
+  // Demo mode: return static demo athlete data immediately
+  if (isDemoMode) {
+    return Stream.value(_demoAthleteUser());
+  }
+
   final authState = ref.watch(authStateProvider);
   final uid = authState.valueOrNull?.uid;
-  if (uid == null) return const Stream.value(null);
+  if (uid == null) return Stream.value(null);
 
+  if (!isFirebaseAvailable) return Stream.value(null);
   final firestoreService = ref.read(firestoreServiceProvider);
   final stream = firestoreService.watchAthleteUser(uid);
 
@@ -37,11 +110,18 @@ final athleteUserProvider = StreamProvider<AthleteUser?>((ref) {
 });
 
 /// Weekly schedule provider — watches /users/{uid}/schedules/weekly
+/// or DemoStore in demo mode.
 final weeklyScheduleProvider = StreamProvider<WeeklySchedule?>((ref) {
+  // Demo mode: return static demo weekly schedule immediately
+  if (isDemoMode) {
+    return Stream.value(_demoWeeklySchedule());
+  }
+
   final authState = ref.watch(authStateProvider);
   final uid = authState.valueOrNull?.uid;
-  if (uid == null) return const Stream.value(null);
+  if (uid == null) return Stream.value(null);
 
+  if (!isFirebaseAvailable) return Stream.value(null);
   final firestoreService = ref.read(firestoreServiceProvider);
   return firestoreService.watchWeeklySchedule(uid);
 });
@@ -54,6 +134,46 @@ final isPremiumProvider = Provider<bool>((ref) {
     orElse: () => false,
   );
 });
+
+/// Demo athlete user used when running in demo mode without Firebase.
+AthleteUser _demoAthleteUser() {
+  final archetype = Archetype.resilientBounceback;
+  final archetypeName = AppStrings.getArchetypeName(archetype);
+
+  return AthleteUser(
+    uid: demoUid,
+    parentUid: '',
+    name: demoName,
+    role: 'athlete',
+    assignedArchetype: archetypeName,
+    onboardingCompleted: true,
+    composureStreak: 0,
+    lastCompletedTimestamp: '',
+    shirtEligibleFlag: false,
+    shirtStatus: 'unclaimed',
+    subscriptionStatus: 'active',
+  );
+}
+
+/// Demo weekly schedule used when running in demo mode without Firebase.
+WeeklySchedule _demoWeeklySchedule() {
+  final archetype = Archetype.resilientBounceback;
+  final activeSessions = ArchetypeEngine.getActiveSessions(archetype, 'Midfielder');
+
+  return WeeklySchedule(
+    activeWeekStart: DateTime.now().toUtc().toIso8601String(),
+    isCustomMode: true,
+    days: {
+      'monday': DailySchedule(sessionId: activeSessions[0], completed: false),
+      'tuesday': DailySchedule(sessionId: activeSessions[1], completed: false),
+      'wednesday': DailySchedule(sessionId: activeSessions[2], completed: false),
+      'thursday': DailySchedule(sessionId: activeSessions[0], completed: false),
+      'friday': DailySchedule(sessionId: activeSessions[1], completed: false),
+      'saturday': DailySchedule(sessionId: activeSessions[2], completed: false),
+      'sunday': DailySchedule(sessionId: null, completed: false),
+    },
+  );
+}
 
 /// Onboarding completed provider
 final onboardingCompletedProvider = Provider<bool>((ref) {

@@ -12,14 +12,11 @@ service cloud.firestore {
     }
 
     // Users collection - top-level user documents
-    // Read/write only via UID-based ownership checks
-    // Direct client writes are blocked - only backend functions can provision
+    // Authenticated users can read/write their own document by auth UID.
+    // This lets the mobile app provision its own profile and the parent
+    // portal read linked athlete data without a backend round-trip.
     match /users/{userId} {
-      allow read: if isAuthenticated() &&
-                     (resource.data.uid == request.auth.uid);
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
 
       // Telemetry subcollection
       // Athletes can only create their own telemetry

@@ -36,13 +36,13 @@ class HomeScreen extends ConsumerWidget {
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                _buildProfileCard(athleteUser),
+                _buildProfileCard(context, athleteUser),
                 const SizedBox(height: 20),
-                _buildStreakCard(athleteUser),
+                _buildStreakCard(context, athleteUser),
                 const SizedBox(height: 20),
-                _buildWeeklyScheduleCard(weeklySchedule),
+                _buildWeeklyScheduleCard(context, weeklySchedule),
                 const SizedBox(height: 20),
-                _buildArchetypeCard(athleteUser),
+                _buildArchetypeCard(context, athleteUser),
                 const SizedBox(height: 20),
                 _buildStartSessionButton(context, ref, dailySession, athleteUser),
               ],
@@ -57,7 +57,7 @@ class HomeScreen extends ConsumerWidget {
     AthleteUser user,
   ) {
     if (daily == null) {
-      return const ElevatedButton.icon(
+      return ElevatedButton.icon(
         icon: Icon(Icons.hourglass_empty),
         label: Text('Loading today\'s session...'),
         onPressed: null,

@@ -27,13 +27,13 @@ export function ConversationStarter({ archetype, athleteName }: ConversationStar
   const colorClass = archetypeColors[archetype] || 'bg-gray-100 text-gray-800 border-gray-200';
 
   return (
-    <div className="card">
+    <div className="card p-6">
       <div className="flex items-start gap-4">
-        <div className={`flex-shrink-0 px-3 py-1 rounded-full text-sm font-medium ${colorClass}`}>
+        <div className={`flex-shrink-0 px-3 py-1 rounded-full text-sm font-medium border ${colorClass}`}>
           {archetype}
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">This Week\'s Conversation Starter</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">This Week's Conversation Starter</h3>
           <p className="text-gray-700 leading-relaxed">{message}</p>
         </div>
       </div>

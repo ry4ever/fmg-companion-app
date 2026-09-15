@@ -105,7 +105,7 @@ export const DEMO_ATHLETE_DATA = {
   role: 'athlete',
   assigned_archetype: 'The Resilient Bounceback',
   onboarding_completed: true,
-  composure_streak: 7,
+  composure_streak: 3,
   last_completed_timestamp: Date.now(),
   shirt_eligible_flag: false,
   shirt_status: 'none',
@@ -116,27 +116,24 @@ export const DEMO_WEEKLY_SCHEDULE = {
   is_custom_mode: false,
   days: {
     monday: { completed: true, session_id: 'session_monday_workout' },
-    tuesday: { completed: false, session_id: 'session_tuesday_workout' },
+    tuesday: { completed: true, session_id: 'session_tuesday_workout' },
     wednesday: { completed: true, session_id: 'session_wednesday_workout' },
     thursday: { completed: false },
-    friday: { completed: true, session_id: 'session_friday_workout' },
+    friday: { completed: false },
     saturday: { completed: false },
-    sunday: { completed: true, session_id: 'session_sunday_workout' },
+    sunday: { completed: false },
   },
 };
 
 export const isDemoMode = () => {
-  // Demo mode if no API key, or if the key looks like a placeholder
+  // Demo mode only when there's no API key or the key is explicitly the demo-placeholder
   return !process.env.NEXT_PUBLIC_FIREBASE_API_KEY ||
-         process.env.NEXT_PUBLIC_FIREBASE_API_KEY.includes('demo-api-key') ||
-         process.env.NEXT_PUBLIC_FIREBASE_API_KEY === 'AIzaSyCgZXr-OWLTRpONU1Ky0QVikh3LlNmM8Eo';
+         process.env.NEXT_PUBLIC_FIREBASE_API_KEY.includes('demo-api-key');
 };
 
 export const demoLogin = (userEmail: string = 'demo_parent@example.com') => {
-  if (isDemoMode()) {
-    localStorage.setItem('fmg_user_id', userEmail);
-    window.location.reload();
-  }
+  localStorage.setItem('fmg_user_id', userEmail);
+  window.location.href = '/dashboard';
 };
 
 export {

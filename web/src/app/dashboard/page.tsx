@@ -8,7 +8,6 @@ import {
   doc,
   getDoc,
   getInitError,
-  isDemoMode,
   DEMO_PARENT_DATA,
   DEMO_ATHLETE_DATA,
   DEMO_WEEKLY_SCHEDULE
@@ -38,23 +37,23 @@ export default function DashboardPage() {
         setLoading(true);
         setError(null);
 
-        const initError = getInitError();
-        if (initError) {
-          throw new Error(initError);
-        }
-
-        const firestore = getFirestoreInstance();
-
         const userId = localStorage.getItem('fmg_user_id') || 'demo_parent@example.com';
 
-        // Demo mode - use mock data when Firebase isn't configured
-        if (isDemoMode()) {
+        // Demo-only account uses mock data regardless of Firebase config status
+        if (userId === 'demo_parent@example.com') {
           setParent(DEMO_PARENT_DATA as ParentUser);
           setAthlete(DEMO_ATHLETE_DATA as AthleteUser);
           setWeeklySchedule(DEMO_WEEKLY_SCHEDULE);
           setLoading(false);
           return;
         }
+
+        const initError = getInitError();
+        if (initError) {
+          throw new Error(initError);
+        }
+
+        const firestore = getFirestoreInstance();
 
         const parentDoc = await getDoc(doc(firestore, 'users', userId));
         if (!parentDoc.exists()) {
@@ -97,7 +96,10 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand-500 border-t-transparent"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand-500 border-t-transparent mx-auto"></div>
+          <p className="mt-4 text-sm text-gray-500">Loading dashboard...</p>
+        </div>
       </div>
     );
   }
@@ -130,17 +132,17 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <div className="flex-shrink-0">
                 <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
                   {athlete.name.charAt(0).toUpperCase()}
                 </div>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-xl font-bold text-gray-900">
                   Welcome, {parent.email.split('@')[0]}
                 </h1>
                 <p className="text-sm text-gray-500">
@@ -148,26 +150,29 @@ export default function DashboardPage() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <div className="text-sm text-gray-500">
-                Plan: {parent.plan_tier === 'annual' ? 'Annual' : 'Monthly'} •{" "}
-                Status: <span className="font-medium">{parent.subscription_status}</span>
+                Plan: {parent.plan_tier === 'annual' ? 'Annual' : 'Monthly'}
+                &bull; Status: <span className="font-medium text-gray-600">{parent.subscription_status}</span>
               </div>
               <button
                 onClick={() => {
                   localStorage.removeItem('fmg_user_id');
                   router.push('/login');
                 }}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-600"
+                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors"
               >
                 Sign Out
+                <svg className="w-3 h-3" viewBox="0 0 24 24">
+                  <path fill="none" stroke="currentColor" strokeWidth={2} d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-6 py-6">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <div className="col-span-1 md:col-span-2">
             <CompletionGrid
@@ -184,7 +189,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="col-span-1">
-            <div className="card">
+            <div className="card p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Athlete Stats</h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
@@ -196,7 +201,7 @@ export default function DashboardPage() {
                   <span className="font-medium capitalize">{athlete.assigned_archetype}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span>Current Streak:</span>
+                  <span>Consecutive Days:</span>
                   <span className={`font-medium ${
                     athlete.composure_streak >= 30 ? 'text-green-600' : 'text-gray-600'
                   }`}>
